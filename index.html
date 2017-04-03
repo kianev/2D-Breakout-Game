@@ -32,6 +32,8 @@
     var brickPadding = 10;
     var brickOffsetTop = 30;
     var brickOffsetLeft = 50;
+    var score = 0;
+    var lives = 3;
 
     var bricks = [];
     for (c = 0; c < brickColumnCount; c++) {
@@ -69,16 +71,31 @@
                     if (x > b.x && x < b.x + brickWidth && y > b.y && y < b.y + brickHeight) {
                         dy = -dy;
                         b.status = 0;
+                        score++;
+                        if(score == brickRowCount * brickColumnCount){
+                            alert("YOU WIN, CONGRATULATIONS! Your Score is: " + score);
+                            document.location.reload();
+                        }
                     }
                 }
             }
         }
     }
+    function drawScore() {
+        ctx.font = "16px Arial";
+        ctx.fillstyle = "#0095DD";
+        ctx.fillText("Score: " + score, 8, 20);
+    }
+    function drawLives() {
+        ctx.font = "16px Arial";
+        ctx.fillstyle = "#0095DD";
+        ctx.fillText("Lives: " + lives, canvas.width - 65, 20);
+    }
 
     function drawBall() {
         ctx.beginPath();
         ctx.arc(x, y, ballRadius, 0, Math.PI*2);
-        ctx.fillStyle = "#0095DD";
+        ctx.fillStyle = "#dd4235";
         ctx.fill();
         ctx.closePath();
     }
@@ -113,6 +130,8 @@
         drawBall();
         drawPaddle();
         collisionDetection();
+        drawScore();
+        drawLives();
 
         if(x + dx > canvas.width-ballRadius || x + dx < ballRadius) {
             dx = -dx;
@@ -124,8 +143,17 @@
                 dy = -dy;
 
             }else {
-                alert("GAME OVER");
-                document.location.reload();
+                lives--;
+                if(!lives){
+                    alert("GAME OVER!");
+                    document.location.reload();
+                }else{
+                    x = canvas.width/2;
+                    y = canvas.height - 30;
+                    dx = 2;
+                    dy = -2;
+                    paddleX = (canvas.width - paddleWidth)/2;
+                }
             }
         }
 
@@ -138,9 +166,10 @@
 
         x += dx;
         y += dy;
+        requestAnimationFrame(draw);
     }
 
-    setInterval(draw, 10);
+    draw();
 </script>
 
 </body>
